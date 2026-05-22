@@ -1,0 +1,447 @@
+index.html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Baba Pro Max</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+       .container { max-width: 440px; margin: auto; }
+       .lang-toggle { position: absolute; top: 15px; right: 15px; background: white; border: 2px solid #FF6B00; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; cursor: pointer; z-index: 100; }
+       .bill-section { background: white; padding: 18px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); margin-bottom: 12px; }
+       .control-section { background: white; padding: 18px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        h1 { color: #FF6B00; margin: 0 0 5px 0; text-align:center; font-size: 26px; font-weight: 800; }
+        #shopType { text-align:center; font-size:11px; color:#666; margin-bottom:8px; background:#f0f0f0; padding:4px; border-radius:10px; }
+        #customerInput { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #FF6B00; border-radius: 12px; text-align:center; font-size:15px; font-weight:600; }
+        #micBtn { background: linear-gradient(135deg, #FF6B00, #FF8C00); border: none; border-radius: 50%; width: 95px; height: 95px; color: white; margin: 12px auto; display:flex; align-items:center; justify-content:center; box-shadow: 0 6px 20px rgba(255,107,0,0.5); transition: all 0.3s; flex-direction:column; cursor: pointer; }
+        #micBtn.logo { font-size: 28px; font-weight: 900; line-height: 1; }
+        #micBtn.logo-sub { font-size: 10px; font-weight: 700; margin-top: 2px; letter-spacing: 1px; }
+        #micBtn:active { transform: scale(0.95); }
+        #micBtn.listening { background: linear-gradient(135deg, #FF0000, #CC0000); animation: pulse 1.2s infinite; }
+        #micBtn:disabled { background: #999; cursor: not-allowed; opacity: 0.6; }
+        @keyframes pulse { 0%,100% { transform: scale(1); box-shadow: 0 6px 20px rgba(255,0,0,0.6); } 50% { transform: scale(1.1); box-shadow: 0 8px 30px rgba(255,0,0,0.9); } }
+        #status { font-weight: 700; min-height: 22px; text-align:center; color: #333; font-size:13px; margin:5px 0; }
+        #bill { text-align: left; border: 3px dashed #FF6B00; padding: 15px; margin-top: 10px; display: none; border-radius: 12px; background: #fffef7; }
+       .bill-row { display: flex; justify-content: space-between; margin: 6px 0; font-size: 14px; }
+       .total-row { font-weight: 800; border-top: 3px solid #333; padding-top: 8px; margin-top: 8px; font-size: 18px; color:#FF6B00; }
+       .btn { background: #333; color: white; border: none; padding: 10px 12px; margin: 3px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+       .btn:active { transform: scale(0.95); }
+       .btn-row { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 8px; gap: 4px; }
+       .btn-orange { background: linear-gradient(135deg, #FF6B00, #FF8C00); }
+       .btn-green { background: linear-gradient(135deg, #28a745, #20c997); }
+       .btn-blue { background: linear-gradient(135deg, #0066CC, #0052a3); }
+       .btn-red { background: linear-gradient(135deg, #dc3545, #c82333); }
+       .panel { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-top: 10px; display: none; max-height: 350px; overflow-y: auto; }
+       .panel input,.panel select { width: 100%; padding: 10px; margin: 5px 0; border: 2px solid #ddd; border-radius: 8px; font-size:14px; }
+       .panel input:focus,.panel select:focus { outline:none; border-color:#FF6B00; }
+       .menu-item-row { display: flex; align-items: center; gap: 5px; margin: 8px 0; background:white; padding:8px; border-radius:8px; }
+       .menu-item-row input { margin: 0; flex:1; }
+       .udhaar-item { background: white; padding: 10px; margin: 6px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items:center; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+       .alert { padding: 10px; border-radius: 8px; margin: 8px 0; font-size: 12px; font-weight:600; }
+       .alert-warn { background: #fff3cd; color: #856404; border: 2px solid #ffeaa7; }
+       .alert-success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+       .alert-error { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+       .voice-help { background:#e3f2fd; border:1px solid #2196F3; padding:8px; border-radius:8px; font-size:10px; margin:8px 0; color:#0d47a1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">हिंदी</button>
+        <div class="bill-section">
+            <h1 id="appTitle">🔥 BILL BABA PRO 🔥</h1>
+            <div id="shopType">Loading...</div>
+            <div id="bill">
+                <h3 style="text-align:center; margin:0; color:#FF6B00;" id="billShopName">APNI DUKAAN</h3>
+                <p style="text-align:center; font-size:10px; margin:2px 0;" id="billGST"></p>
+                <p style="text-align:center; font-size:11px; margin:3px 0; font-weight:600;"><span id="labelCustomer">Grahak</span>: <span id="billCustomer">Cash</span></p>
+                <p style="text-align:center; font-size:10px; margin:2px 0;" id="billDate"></p>
+                <hr style="border:1px dashed #ccc; margin:8px 0;">
+                <div id="billItems"></div>
+                <div class="bill-row total-row">
+                    <span id="labelTotal">TOTAL:</span>
+                    <span>₹<span id="billTotal">0</span></span>
+                </div>
+                <p style="text-align:center; font-size:9px; margin-top:8px; color:#666;">Powered by Bill Baba</p>
+            </div>
+            <div id="expiryAlert"></div>
+        </div>
+        <div class="control-section">
+            <input type="text" id="customerInput" placeholder="👤 Grahak Ka Naam / Udhaar Ke Liye">
+            <button id="micBtn" onclick="startListening()">
+                <div class="logo">🔥BB🔥</div>
+                <div class="logo-sub" id="micBtnText">TAP TO SPEAK</div>
+            </button>
+            <div id="status">Taiyaar Hai Seth Ji - Logo Dabao</div>
+            <div class="voice-help" id="voiceHelp">
+                <b>Voice Commands:</b> "Do chai", "Chai hatao", "Last delete", "Samosa 25 kar do", "Bill saaf karo", "Kitna hua"
+            </div>
+            <div class="btn-row" id="billActions" style="display:none;">
+                <button class="btn btn-green" onclick="printBill()" id="btnPrint">🧾 Print</button>
+                <button class="btn btn-blue" onclick="whatsappBill()" id="btnWhatsApp">📤 WhatsApp</button>
+                <button class="btn btn-orange" onclick="saveUdhaar()" id="btnUdhaar">💰 Udhaar</button>
+                <button class="btn btn-red" onclick="clearBill()" id="btnClear">🗑️ Clear</button>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-orange" onclick="togglePanel('setupPanel')" id="btnSetup">⚙️ Setup</button>
+                <button class="btn btn-orange" onclick="togglePanel('menuPanel')" id="btnMenu">📋 Menu</button>
+                <button class="btn btn-orange" onclick="togglePanel('udhaarPanel')" id="btnUdhaarList">💰 Udhaar</button>
+                <button class="btn btn-orange" onclick="togglePanel('summaryPanel')" id="btnSummary">📊 Hisab</button>
+            </div>
+            <div id="setupPanel" class="panel">
+                <h3 style="margin-top:0; font-size:16px; color:#FF6B00;" id="setupTitle">⚙️ Dukaan Setup</h3>
+                <input type="text" id="shopNameInput" placeholder="Dukaan Ka Naam">
+                <select id="shopTypeSelect">
+                    <option value="tea">☕ Tea Stall / General</option>
+                    <option value="medical">💊 Medical Store</option>
+                    <option value="kirana">🛒 Kirana Store</option>
+                    <option value="restaurant">🍛 Restaurant</option>
+                </select>
+                <input type="text" id="gstInput" placeholder="GST No. / License No.">
+                <input type="tel" id="phoneInput" placeholder="Phone Number">
+                <button class="btn btn-orange" onclick="saveSetup()" style="width:100%; margin-top:8px;" id="btnSaveSetup">💾 Save Setup</button>
+            </div>
+            <div id="menuPanel" class="panel">
+                <h3 style="margin-top:0; font-size:16px; color:#FF6B00;" id="menuTitle">📋 Menu / Rate List</h3>
+                <div id="menuList"></div>
+                <button class="btn btn-blue" onclick="addMenuItem()" style="width:100%; margin:5px 0;" id="btnAddItem">+ Naya Item Jodo</button>
+                <button class="btn btn-green" onclick="saveMenu()" style="width:100%;" id="btnSaveMenu">💾 Menu Save Karo</button>
+            </div>
+            <div id="udhaarPanel" class="panel">
+                <h3 style="margin-top:0; font-size:16px; color:#FF6B00;" id="udhaarTitle">💰 Udhaar Khata</h3>
+                <div id="udhaarList"></div>
+                <div id="udhaarTotal" style="font-weight:800; margin-top:10px; text-align:center; font-size:16px; color:#dc3545;"></div>
+                <button class="btn btn-blue" onclick="exportUdhaar()" style="width:100%; margin-top:8px;" id="btnExportUdhaar">📤 WhatsApp Pe Bhejo</button>
+            </div>
+            <div id="summaryPanel" class="panel">
+                <h3 style="margin-top:0; font-size:16px; color:#FF6B00;" id="summaryTitle">📊 Aaj Ka Hisab</h3>
+                <div id="summaryText" style="font-size:13px; margin-top:10px;"></div>
+                <button class="btn btn-blue" onclick="exportSummary()" style="width:100%; margin-top:8px;" id="btnExportSummary">📤 WhatsApp Pe Bhejo</button>
+            </div>
+        </div>
+    </div>
+<script>
+let currentLang = 'hi';
+let shopData = {};
+let menu = {};
+let expiryData = {};
+let currentBill = [];
+let dailySales = [];
+let udhaariList = [];
+let isListening = false;
+let recognition = null;
+const LANG = {
+    hi: { appTitle: "🔥 बिल बाबा प्रो 🔥", tapToSpeak: "बोलने के लिए दबाएं", ready: "तैयार है सेठ जी - लोगो दबाओ", listening: "🔴 सुन रहा हूं... बोलो", understood: "✅ समझ गया: ", notFound: "❌ आइटम नहीं मिला. मेनू में जोड़ो", added: "✅ बिल में जोड़ दिया", removed: "✅ हटा दिया", cleared: "✅ बिल साफ हो गया", rateChanged: "का रेट ₹ कर दिया", total: "कुल", customer: "ग्राहक", billCleared: "✅ बिल साफ हो गया", enterName: "❌ पहले ग्राहक का नाम लिखो", emptyBill: "❌ बिल खाली है", udhaarSaved: "का ₹ उधार सेव हो गया", setup: "⚙️ सेटअप", menu: "📋 मेनू", udhaar: "💰 उधार", summary: "📊 हिसाब", setupTitle: "⚙️ दुकान सेटअप", menuTitle: "📋 मेनू / रेट लिस्ट", udhaarTitle: "💰 उधार खाता", summaryTitle: "📊 आज का हिसाब", print: "🧾 प्रिंट", whatsapp: "📤 व्हाट्सऐप", udhaarBtn: "💰 उधार", clear: "🗑️ साफ", saveSetup: "💾 सेव सेटअप", addItem: "+ नया आइटम जोड़ो", saveMenu: "💾 मेनू सेव करो", exportUdhaar: "📤 व्हाट्सऐप पे भेजो", exportSummary: "📤 व्हाट्सऐप पे भेजो", noUdhaar: "😊 कोई उधार नहीं है", totalUdhaar: "कुल उधार: ₹", todaySale: "आज की सेल", totalBills: "कुल बिल", udhaarLabel: "उधार", nothingYet: "अभी तक कुछ नहीं", voiceHelp: "<b>वॉइस कमांड:</b> \"दो चाय\", \"चाय हटाओ\", \"लास्ट डिलीट\", \"समोसा 25 कर दो\", \"बिल साफ करो\", \"कितना हुआ\"", micError: "❌ माइक एरर: https:// पे चलाओ और Permission दो", noSpeech: "🔇 कुछ बोला नहीं", tryAgain: "❌ फिर से दबाओ", httpsRequired: "❌ HTTPS जरूरी है! Github Pages पे डालो" },
+    en: { appTitle: "🔥 BILL BABA PRO 🔥", tapToSpeak: "TAP TO SPEAK", ready: "Ready Seth Ji - Tap Logo", listening: "🔴 Listening... SPEAK", understood: "✅ Got it: ", notFound: "❌ Item not found. Add to menu", added: "✅ Added to bill", removed: "✅ Removed", cleared: "✅ Bill cleared", rateChanged: "rate changed to ₹", total: "TOTAL", customer: "Customer", billCleared: "✅ Bill cleared", enterName: "❌ Enter customer name first", emptyBill: "❌ Bill is empty", udhaarSaved: "₹ saved as Udhaar for", setup: "⚙️ Setup", menu: "📋 Menu", udhaar: "💰 Udhaar", summary: "📊 Summary", setupTitle: "⚙️ Shop Setup", menuTitle: "📋 Menu / Rate List", udhaarTitle: "💰 Udhaar Khata", summaryTitle: "📊 Today's Summary", print: "🧾 Print", whatsapp: "📤 WhatsApp", udhaarBtn: "💰 Udhaar", clear: "🗑️ Clear", saveSetup: "💾 Save Setup", addItem: "+ Add New Item", saveMenu: "💾 Save Menu", exportUdhaar: "📤 Send on WhatsApp", exportSummary: "📤 Send on WhatsApp", noUdhaar: "😊 No Udhaar", totalUdhaar: "Total Udhaar: ₹", todaySale: "Today's Sale", totalBills: "Total Bills", udhaarLabel: "Udhaar", nothingYet: "Nothing yet", voiceHelp: "<b>Voice Commands:</b> \"2 chai\", \"Remove chai\", \"Delete last\", \"Edit samosa 25\", \"Clear bill\", \"What's total\"", micError: "❌ Mic Error: Use https:// and Allow Permission", noSpeech: "🔇 No speech detected", tryAgain: "❌ Try again", httpsRequired: "❌ HTTPS Required! Use Github Pages" }
+};
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        currentLang = localStorage.getItem('billBabaLang') || 'hi';
+        shopData = JSON.parse(localStorage.getItem('billBabaShop')) || {name:"APNI DUKAAN",type:"tea",gst:"",phone:""};
+        menu = JSON.parse(localStorage.getItem('billBabaMenu')) || {"chai":12,"tea":12,"coffee":25,"samosa":20,"vada pav":25,"poha":30,"maggi":40,"bun maska":30,"bread pakoda":35,"crocin 650":35,"dolo 650":30,"azithral 500":120,"azithral 500 tablet":12,"montair lc":180,"calpol 650":25,"pan 40":110,"taxim o 200":95,"atta 1kg":45,"chawal 1kg":60,"sugar 1kg":42};
+        expiryData = JSON.parse(localStorage.getItem('billBabaExpiry')) || {"crocin 650":"2026-12-31","dolo 650":"2026-10-15","azithral 500":"2026-08-20"};
+        dailySales = JSON.parse(localStorage.getItem('billBabaSales')) || [];
+        udhaariList = JSON.parse(localStorage.getItem('billBabaUdhaar')) || [];
+        updateLanguage();
+        document.getElementById('billShopName').innerText = shopData.name;
+        document.getElementById('billGST').innerText = shopData.gst? `${shopData.gst} | ${shopData.phone}` : shopData.phone;
+        let typeText = {'tea': '☕ Tea Stall Mode', 'medical': '💊 Medical Store Mode','kirana': '🛒 Kirana Store Mode', 'restaurant': '🍛 Restaurant Mode'};
+        document.getElementById('shopType').innerText = typeText[shopData.type] || 'General Mode';
+        document.getElementById('shopNameInput').value = shopData.name;
+        document.getElementById('shopTypeSelect').value = shopData.type;
+        document.getElementById('gstInput').value = shopData.gst;
+        document.getElementById('phoneInput').value = shopData.phone;
+        document.getElementById('billDate').innerText = new Date().toLocaleString('hi-IN', {dateStyle:'short', timeStyle:'short'});
+        renderUdhaarList();
+        checkMicSupport();
+        document.getElementById('status').innerText = LANG[currentLang].ready;
+    } catch(e) {
+        console.error("Init Error:", e);
+        document.getElementById('status').innerText = "❌ Error loading app - Refresh karo";
+    }
+});
+function checkMicSupport() {
+    const t = LANG[currentLang];
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('status');
+    if(location.protocol!== 'https:' && location.hostname!== 'localhost') {
+        btn.disabled = true;
+        status.innerText = t.httpsRequired;
+        showAlert(t.httpsRequired, "error");
+    } else if (!('webkitSpeechRecognition' in window)) {
+        btn.disabled = true;
+        status.innerText = "❌ Chrome Browser Required";
+        showAlert("❌ Use Chrome Browser", "error");
+    }
+}
+function toggleLanguage() {
+    currentLang = currentLang === 'hi'? 'en' : 'hi';
+    localStorage.setItem('billBabaLang', currentLang);
+    updateLanguage();
+}
+function updateLanguage() {
+    const t = LANG[currentLang];
+    document.getElementById('langBtn').innerText = currentLang === 'hi'? 'English' : 'हिंदी';
+    document.getElementById('appTitle').innerText = t.appTitle;
+    document.getElementById('micBtnText').innerText = t.tapToSpeak;
+    document.getElementById('voiceHelp').innerHTML = t.voiceHelp;
+    document.getElementById('labelCustomer').innerText = t.customer;
+    document.getElementById('labelTotal').innerText = t.total;
+    document.getElementById('btnPrint').innerText = t.print;
+    document.getElementById('btnWhatsApp').innerText = t.whatsapp;
+    document.getElementById('btnUdhaar').innerText = t.udhaarBtn;
+    document.getElementById('btnClear').innerText = t.clear;
+    document.getElementById('btnSetup').innerText = t.setup;
+    document.getElementById('btnMenu').innerText = t.menu;
+    document.getElementById('btnUdhaarList').innerText = t.udhaar;
+    document.getElementById('btnSummary').innerText = t.summary;
+    document.getElementById('setupTitle').innerText = t.setupTitle;
+    document.getElementById('menuTitle').innerText = t.menuTitle;
+    document.getElementById('udhaarTitle').innerText = t.udhaarTitle;
+    document.getElementById('summaryTitle').innerText = t.summaryTitle;
+    document.getElementById('btnSaveSetup').innerText = t.saveSetup;
+    document.getElementById('btnAddItem').innerText = t.addItem;
+    document.getElementById('btnSaveMenu').innerText = t.saveMenu;
+    document.getElementById('btnExportUdhaar').innerText = t.exportUdhaar;
+    document.getElementById('btnExportSummary').innerText = t.exportSummary;
+}
+function startListening() {
+    const t = LANG[currentLang];
+    if(isListening) return;
+    if(location.protocol!== 'https:' && location.hostname!== 'localhost') {
+        showAlert(t.httpsRequired, "error");
+        return;
+    }
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('status');
+    btn.classList.add('listening');
+    status.innerText = t.listening;
+    isListening = true;
+    if (!('webkitSpeechRecognition' in window)) {
+        status.innerText = "❌ Chrome Update Karo";
+        btn.classList.remove('listening');
+        isListening = false;
+        return;
+    }
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = currentLang === 'hi'? 'hi-IN' : 'en-IN';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 3;
+    let finalTranscript = '';
+    const timer = setTimeout(() => { if(recognition) recognition.stop(); }, 10000);
+    recognition.onresult = function(e) {
+        let interim = '';
+        for(let i = e.resultIndex; i < e.results.length; i++) {
+            if(e.results[i].isFinal) {
+                finalTranscript += e.results[i][0].transcript + ' ';
+            } else {
+                interim += e.results[i][0].transcript;
+            }
+        }
+        status.innerText = "🔴 " + (finalTranscript || interim);
+    };
+    recognition.onerror = function(e) {
+        clearTimeout(timer);
+        let msg = e.error === 'not-allowed'? t.micError : e.error === 'no-speech'? t.noSpeech : t.tryAgain;
+        status.innerText = msg;
+        btn.classList.remove('listening');
+        isListening = false;
+    };
+    recognition.onend = function() {
+        clearTimeout(timer);
+        btn.classList.remove('listening');
+        isListening = false;
+        if(finalTranscript.trim()) {
+            status.innerText = t.understood + finalTranscript;
+            processVoice(finalTranscript.toLowerCase().trim());
+        } else {
+            status.innerText = t.ready;
+        }
+    };
+    recognition.start();
+}
+function processVoice(bol) {
+    const t = LANG[currentLang];
+    bol = bol.replace(/एक/g,'1').replace(/do|दो/g,'2').replace(/teen|तीन/g,'3').replace(/char|चार/g,'4').replace(/panch|पांच/g,'5').replace(/che|छह/g,'6').replace(/saat|सात/g,'7').replace(/aath|आठ/g,'8').replace(/nau|नौ/g,'9').replace(/das|दस/g,'10');
+    if(bol.includes('clear') || bol.includes('saaf') || bol.includes('naya bill') || bol.includes('bill saaf')) {
+        clearBill();
+        document.getElementById('status').innerText = t.cleared;
+        return;
+    }
+    if(bol.includes('delete last') || bol.includes('remove last') || bol.includes('last hatao') || bol.includes('pichla hatao')) {
+        if(currentBill.length > 0) {
+            let removed = currentBill.pop();
+            updateBillDisplay();
+            document.getElementById('status').innerText = `✅ ${removed.name} ${t.removed}`;
+        } else {
+            document.getElementById('status').innerText = "❌ Bill Khali Hai";
+        }
+        return;
+    }
+    if(bol.includes('total') || bol.includes('kitna hua') || bol.includes('hisab')) {
+        let total = currentBill.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        document.getElementById('status').innerText = `✅ ${t.total}: ₹${total}`;
+        return;
+    }
+    if(bol.includes('remove') || bol.includes('hatao') || bol.includes('delete') || bol.includes('nikaal')) {
+        let itemToRemove = '';
+        for(let item in menu) {
+            let itemKey = item.split(" ")[0];
+            if(bol.includes(itemKey) || bol.includes(item)) {
+                itemToRemove = item;
+                break;
+            }
+        }
+        if(itemToRemove) {
+            let initialLength = currentBill.length;
+            currentBill = currentBill.filter(i => i.name!== itemToRemove);
+            if(currentBill.length < initialLength) {
+                updateBillDisplay();
+                document.getElementById('status').innerText = `✅ ${itemToRemove} Bill Se Hata Diya`;
+            } else {
+                document.getElementById('status').innerText = `❌ ${itemToRemove} Bill Mein Nahi Hai`;
+            }
+        } else {
+            document.getElementById('status').innerText = "❌ Kaunsa item hatana hai?";
+        }
+        return;
+    }
+    if(bol.includes('edit') || bol.includes('rate') || bol.includes('kar do') || bol.includes('badal')) {
+        let words = bol.split(" ");
+        let newPrice = null;
+        let itemToEdit = '';
+        for(let w of words) {
+            if(!isNaN(w) && parseInt(w) > 0) {
+                newPrice = parseInt(w);
+                break;
+            }
+        }
+        for(let item in menu) {
+            let itemKey = item.split(" ")[0];
+            if(bol.includes(itemKey) || bol.includes(item)) {
+                itemToEdit = item;
+                break;
+            }
+        }
+        if(itemToEdit && newPrice) {
+            menu[itemToEdit] = newPrice;
+            localStorage.setItem('billBabaMenu', JSON.stringify(menu));
+            document.getElementById('status').innerText = `✅ ${itemToEdit} ${t.rateChanged} ${newPrice}`;
+            renderMenuList();
+        } else {
+            document.getElementById('status').innerText = "❌ Bolo: samosa 25 kar do";
+        }
+        return;
+    }
+    let foundItems = [];
+    let words = bol.split(" ");
+    let qty = 1;
+    for(let i = 0; i < words.length; i++) {
+        let word = words[i];
+        if(!isNaN(word)) { qty = parseInt(word); continue; }
+        for(let item in menu) {
+            let itemKey = item.split(" ")[0];
+            if(word.includes(itemKey) || item.includes(word) || item.includes(word.replace(/[^a-z]/g,''))) {
+                foundItems.push({name: item, qty: qty, price: menu[item]});
+                qty = 1;
+                break;
+            }
+        }
+    }
+    if(foundItems.length === 0) {
+        document.getElementById('status').innerText = t.notFound;
+        return;
+    }
+    foundItems.forEach(item => currentBill.push(item));
+    updateBillDisplay();
+    if(shopData.type === 'medical') checkItemExpiry(foundItems);
+    document.getElementById('status').innerText = t.added;
+}
+function updateBillDisplay() {
+    const billDiv = document.getElementById('bill');
+    const itemsDiv = document.getElementById('billItems');
+    const totalSpan = document.getElementById('billTotal');
+    const billActions = document.getElementById('billActions');
+    const customerName = document.getElementById('customerInput').value || "Cash";
+    if(currentBill.length === 0) {
+        billDiv.style.display = 'none';
+        billActions.style.display = 'none';
+        return;
+    }
+    billDiv.style.display = 'block';
+    billActions.style.display = 'flex';
+    document.getElementById('billCustomer').innerText = customerName;
+    let html = '';
+    let total = 0;
+    currentBill.forEach(item => {
+        let itemTotal = item.price * item.qty;
+        total += itemTotal;
+        html += `<div class="bill-row"><span>${item.qty} x ${item.name}</span><span>₹${itemTotal}</span></div>`;
+    });
+    itemsDiv.innerHTML = html;
+    totalSpan.innerText = total;
+}
+function clearBill() {
+    const t = LANG[currentLang];
+    if(currentBill.length > 0) {
+        let total = currentBill.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        dailySales.push({ items: [...currentBill], total: total, customer: document.getElementById('customerInput').value || "Cash", date: new Date().toISOString() });
+        localStorage.setItem('billBabaSales', JSON.stringify(dailySales));
+    }
+    currentBill = [];
+    document.getElementById('customerInput').value = '';
+    updateBillDisplay();
+    document.getElementById('status').innerText = t.billCleared;
+    document.getElementById('expiryAlert').innerHTML = '';
+}
+function printBill() { window.print(); }
+function whatsappBill() {
+    let customer = document.getElementById('customerInput').value || "Customer";
+    let items = currentBill.map(item => `${item.qty} x ${item.name} = ₹${item.price * item.qty}`).join('\n');
+    let total = currentBill.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    let msg = `*${shopData.name}*\n${shopData.gst? 'GST: ' + shopData.gst + '\n' : ''}Grahak: ${customer}\nDate: ${new Date().toLocaleDateString('hi-IN')}\n\n${items}\n\n*TOTAL: ₹${total}*\n\nDhanyawad! 🙏`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+}
+function saveUdhaar() {
+    const t = LANG[currentLang];
+    let name = document.getElementById('customerInput').value.trim();
+    if(!name) { showAlert(t.enterName, "warn"); return; }
+    if(currentBill.length === 0) { showAlert(t.emptyBill, "warn"); return; }
+    let total = currentBill.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    udhaariList.push({name: name, amount: total, date: new Date().toISOString(), items: [...currentBill]});
+    localStorage.setItem('billBabaUdhaar', JSON.stringify(udhaariList));
+    renderUdhaarList();
+    clearBill();
+    showAlert(`${name} ${t.udhaarSaved} ${total}`, "success");
+}
+function togglePanel(panelId) {
+    document.querySelectorAll('.panel').forEach(p => {
+        if(p.id!== panelId) p.style.display = 'none';
+    });
+    const panel = document.getElementById(panelId);
+    panel.style.display = panel.style.display === 'none' || panel.style.display === ''? 'block' : 'none';
+    if(panelId === 'menuPanel' && panel.style.display === 'block') renderMenuList();
+    if(panelId === 'udhaarPanel' && panel.style.display === 'block') renderUdhaarList();
+    if(panelId === 'summaryPanel' && panel.style.display === 'block') renderSummary();
+}
+function saveSetup() {
+    shopData.name = document.getElementById('shopNameInput').value || "APNI DUKAAN";
+    shopData.type = document.getElementById('shopTypeSelect').value;
+    shopData.gst = document.getElementById('gstInput').value;
+    shopData.phone = document.getElementById('phoneInput').value;
+    localStorage.setItem('billBabaShop', JSON.stringify(shopData));
+    document.getElementById('billShopName').innerText = shopData.name;
+    document.getElementById('billGST').innerText = shopData.gst? `${shopData.gst} | ${shopData.phone}` : shopData.phone;
+    let typeText = {'tea': '☕ Tea Stall Mode', 'medical': '💊 Medical Store Mode','kirana': '🛒 Kirana Store Mode', 'restaurant': '🍛 Restaurant Mode'};
+    document.getElementById('shopType').innerText = typeText[shopData.type] || 'General Mode';
+    showAlert("✅ Setup Saved", "success");
+}
+function renderMenuList() {
+    const listDiv = document.getElementById('menuList');
+    let html = '';
+    for(let item in menu) {
+        html += `<div class="menu-item-row">
+            <input type="text" value="${item}" onchange="updateMenuKey('${item}', this.value)">
+            <input type="number" value="${menu[item]}" onchange="updateMenuPrice('${item}', this.value)" style="width:80px;">
+            <button class="btn btn-red" onclick="deleteMenuItem('${item}')" style="padding:
